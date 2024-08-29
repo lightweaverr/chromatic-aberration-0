@@ -16,7 +16,7 @@ const ChromaticAberrationEffect: React.FC = () => {
   let aberrationIntensity = 0.0;
 
   let prevPosition = { x: 0.5, y: 0.5 };
-  let aberrationFadeRate = 0.2;
+  let aberrationFadeRate = 0.02;
 
   useEffect(() => {
     if (!containerRef.current) return;
