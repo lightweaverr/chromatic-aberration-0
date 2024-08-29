@@ -12,9 +12,9 @@ const ChromaticAberrationEffect: React.FC = () => {
   let gridSize = 23.0;
   let mousePosition = { x: 0.5, y: 0.5 };
   let targetMousePosition = { x: 0.5, y: 0.5 };
-  let mouseStopTimeout;
+
   let aberrationIntensity = 0.0;
-  let lastPosition = { x: 0.5, y: 0.5 };
+
   let prevPosition = { x: 0.5, y: 0.5 };
   let aberrationFadeRate = 0.2;
 
