@@ -9,7 +9,7 @@ const ChromaticAberrationEffect: React.FC = () => {
   const containerRef = useRef<HTMLDivElement>(null);
 
   let easeFactor = 0.02;
-  let gridSize = 30.0;
+  let gridSize = 23.0;
   let mousePosition = { x: 0.5, y: 0.5 };
   let targetMousePosition = { x: 0.5, y: 0.5 };
   let mouseStopTimeout;
