@@ -5,10 +5,11 @@ uniform sampler2D u_texture;
 uniform vec2 u_mouse;
 uniform vec2 u_prevMouse;
 uniform float u_aberrationIntensity;
+uniform float u_gridSize;
 
 void main() {
-    vec2 gridUV = floor(vUv * vec2(20.0, 20.0)) / vec2(20.0, 20.0);
-    vec2 centerOfPixel = gridUV + vec2(1.0/20.0, 1.0/20.0);
+    vec2 gridUV = floor(vUv * vec2(u_gridSize, u_gridSize)) / vec2(u_gridSize, u_gridSize);
+    vec2 centerOfPixel = gridUV + vec2(1.0/u_gridSize, 1.0/u_gridSize);
     
     vec2 mouseDirection = u_mouse - u_prevMouse;
     

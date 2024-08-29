@@ -9,13 +9,14 @@ const ChromaticAberrationEffect: React.FC = () => {
   const containerRef = useRef<HTMLDivElement>(null);
 
   let easeFactor = 0.02;
+  let gridSize = 30.0;
   let mousePosition = { x: 0.5, y: 0.5 };
   let targetMousePosition = { x: 0.5, y: 0.5 };
   let mouseStopTimeout;
   let aberrationIntensity = 0.0;
   let lastPosition = { x: 0.5, y: 0.5 };
   let prevPosition = { x: 0.5, y: 0.5 };
-  let aberrationFadeRate = 0.05;
+  let aberrationFadeRate = 0.2;
 
   useEffect(() => {
     if (!containerRef.current) return;
@@ -40,7 +41,8 @@ const ChromaticAberrationEffect: React.FC = () => {
       u_mouse: { value: new THREE.Vector2() },
       u_prevMouse: { value: new THREE.Vector2() },
       u_aberrationIntensity: { value: 0.0 },
-      u_texture: { value: texture }
+      u_texture: { value: texture },
+      u_gridSize: { value: gridSize}
     };
 
     // Create a custom shader material
@@ -64,6 +66,7 @@ const ChromaticAberrationEffect: React.FC = () => {
       mesh.material.uniforms.u_mouse.value.set(mousePosition.x, 1.0 - mousePosition.y);
       mesh.material.uniforms.u_prevMouse.value.set(prevPosition.x, 1.0 - prevPosition.y);
       mesh.material.uniforms.u_aberrationIntensity.value = aberrationIntensity;
+      mesh.material.uniforms.u_gridSize.value = gridSize;
 
       renderer.render(scene, camera);
 
