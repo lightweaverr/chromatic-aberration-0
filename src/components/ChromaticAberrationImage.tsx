@@ -4,8 +4,11 @@ import React, { useEffect, useRef } from 'react';
 import * as THREE from 'three';
 import vertexShader from '@/shaders/vertex';
 import fragmentShader from '@/shaders/fragment'
+import GUI from 'lil-gui';
 
 const ChromaticAberrationEffect: React.FC = () => {
+
+  // initialization
   const containerRef = useRef<HTMLDivElement>(null);
 
   let easeFactor = 0.02;
@@ -14,12 +17,18 @@ const ChromaticAberrationEffect: React.FC = () => {
   let targetMousePosition = { x: 0.5, y: 0.5 };
 
   let aberrationIntensity = 0.0;
+  let maxAberrationIntensity = { maxAberrationIntensity : 1 }
 
   let prevPosition = { x: 0.5, y: 0.5 };
-  let aberrationFadeRate = 0.02;
+  let aberrationFadeRate = { aberrationFadeRate : 0.05 };
+
+
 
   useEffect(() => {
     if (!containerRef.current) return;
+
+    
+
 
     const imageContainer = containerRef.current;
 
@@ -42,8 +51,16 @@ const ChromaticAberrationEffect: React.FC = () => {
       u_prevMouse: { value: new THREE.Vector2() },
       u_aberrationIntensity: { value: 0.0 },
       u_texture: { value: texture },
-      u_gridSize: { value: gridSize}
+      u_gridSize: { value: gridSize }
     };
+
+    // debug panel
+    const gui = new GUI( {width: 400} );
+    gui.add(maxAberrationIntensity, 'maxAberrationIntensity', 0.1, 10, 0.1);
+    gui.add(aberrationFadeRate, 'aberrationFadeRate', 0.0001, 2, 0.001)
+    const gridFolder = gui.addFolder("grid_size");
+    gridFolder.add(shaderUniforms.u_gridSize, 'value', 1.0, 300.0, 1.0);
+
 
     // Create a custom shader material
     const material = new THREE.ShaderMaterial({
@@ -61,12 +78,12 @@ const ChromaticAberrationEffect: React.FC = () => {
 
       mousePosition.x += (targetMousePosition.x - mousePosition.x) * easeFactor;
       mousePosition.y += (targetMousePosition.y - mousePosition.y) * easeFactor;
-      aberrationIntensity = Math.max(0.0, aberrationIntensity - aberrationFadeRate);
+      aberrationIntensity = Math.max(0.0, aberrationIntensity - aberrationFadeRate.aberrationFadeRate);
 
       mesh.material.uniforms.u_mouse.value.set(mousePosition.x, 1.0 - mousePosition.y);
       mesh.material.uniforms.u_prevMouse.value.set(prevPosition.x, 1.0 - prevPosition.y);
       mesh.material.uniforms.u_aberrationIntensity.value = aberrationIntensity;
-      mesh.material.uniforms.u_gridSize.value = gridSize;
+      // mesh.material.uniforms.u_gridSize.value = gridSize;
 
       renderer.render(scene, camera);
 
@@ -74,17 +91,17 @@ const ChromaticAberrationEffect: React.FC = () => {
     };
     requestAnimationFrame(animate);
 
-    const handleMouseMove = (event:  any) => {
+    const handleMouseMove = (event: any) => {
       easeFactor = 0.02;
       let rect = imageContainer.getBoundingClientRect();
-      prevPosition = {...targetMousePosition};
+      prevPosition = { ...targetMousePosition };
 
       targetMousePosition.x = (event.clientX - rect.left) / rect.width;
       targetMousePosition.y = (event.clientY - rect.top) / rect.height;
 
-      aberrationIntensity = 1;
+      aberrationIntensity = maxAberrationIntensity.maxAberrationIntensity;
     }
- 
+
     const handleMouseEnter = (event: any) => {
       easeFactor = 0.02;
       let rect = imageContainer.getBoundingClientRect();
@@ -92,16 +109,16 @@ const ChromaticAberrationEffect: React.FC = () => {
       mousePosition.x = targetMousePosition.x = (event.clientX - rect.left) / rect.width;
       mousePosition.y = targetMousePosition.y = (event.clientY - rect.top) / rect.height;
     }
-    
+
     const handleMouseLeave = () => {
       easeFactor = 0.05;
-      targetMousePosition = {...prevPosition}
+      targetMousePosition = { ...prevPosition }
     }
-   
+
     imageContainer.addEventListener("mousemove", handleMouseMove);
     imageContainer.addEventListener("mouseenter", handleMouseEnter);
     imageContainer.addEventListener("mouseleave", handleMouseLeave);
-    
+
     // Handle window resizing
     // const handleResize = () => {
     //   const width = window.innerWidth;
